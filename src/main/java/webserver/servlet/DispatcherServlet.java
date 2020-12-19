@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import controller.Controller;
+import exception.NotFoundPathException;
+import exception.RequestHandleException;
 import http.HttpRequest;
 import http.response.HttpResponse;
 
@@ -30,8 +32,12 @@ public class DispatcherServlet extends Servlet {
     }
 
     @Override
-    public void doService(HttpRequest request, HttpResponse response) {
-        Controller servlet = handlerMapping.getServlet(request.getPath());
-        servlet.handleRequest(request, response);
+    public void doService(HttpRequest httpRequest, HttpResponse httpResponse) {
+        try{
+            Controller controller = handlerMapping.getServlet(httpRequest.getPath());
+            controller.handleRequest(httpRequest, httpResponse);
+        }catch (NotFoundPathException | RequestHandleException e) {
+            ExceptionHandler.handleError(e,httpRequest,httpResponse);
+        }
     }
 }
