@@ -11,17 +11,26 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import http.request.HttpRequest;
+import exception.NotFoundController;
+import exception.NotFoundPathException;
+import exception.RequestHandleException;
+import http.HttpRequest;
 import http.response.HttpResponse;
+import webserver.servlet.DispatcherServlet;
+import webserver.servlet.ExceptionHandler;
+import webserver.servlet.ResourceHttpHandler;
 import webserver.servlet.Servlet;
+import webserver.servlet.ServletContext;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
+    private final ServletContext servletContext;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(Socket connectionSocket, ServletContext servletContext) {
         this.connection = connectionSocket;
+        this.servletContext = servletContext;
     }
 
     public void run() {
@@ -34,23 +43,23 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
 
             HttpRequest httpRequest = HttpRequest.from(bufferedReader);
-            HttpResponse httpResponse = new HttpResponse(dos);
+            HttpResponse httpResponse = new HttpResponse();
+            servletContext.addServletIfNotPresent("dispatcherServlet", new DispatcherServlet());
+
             handleRequest(httpRequest, httpResponse);
+            httpResponse.send(dos);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
     private void handleRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
-        String requestPath = httpRequest.getPath();
+        final Servlet dispatcherServlet = servletContext.getServlet("dispatcherServlet");
 
-        if (StaticResource.match(requestPath)) {
-            String contentType = StaticResource.fromPath(requestPath).getContentType();
-            httpResponse.responseResource(httpRequest, StaticResource.STATIC_PATH, contentType);
-            return;
+        try {
+            dispatcherServlet.service(httpRequest, httpResponse);
+        } catch (NotFoundController e) {
+            ResourceHttpHandler.handleResource(httpRequest, httpResponse);
         }
-
-        Servlet servlet = ServletMapping.getServlet(requestPath);
-        servlet.doService(httpRequest, httpResponse);
     }
 }
