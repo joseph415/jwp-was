@@ -4,23 +4,24 @@ public enum HttpStatus {
     OK("OK", 200),
     CREATED("CREATED", 201),
     NO_CONTENT("NO CONTENT", 204),
-    FOUND("FOUND", 302),
+    MOVED_PERMANENTLY("MOVED PERMANENTLY", 301),
     BAD_REQUEST("BAD REQUEST", 400),
-    NOT_FOUND("NOT FOUND", 404);
+    NOT_FOUND("NOT FOUND", 404),
+    INTERNAL_SERVER_ERROR("INTERNAL SERVER ERROR", 500);
 
-    private final String reasonPhrase;
-    private final int value;
+    private final String text;
+    private final int code;
 
-    HttpStatus(String reasonPhrase, int value) {
-        this.reasonPhrase = reasonPhrase;
-        this.value = value;
+    HttpStatus(String text, int code) {
+        this.text = text;
+        this.code = code;
     }
 
-    public String getReasonPhrase() {
-        return reasonPhrase;
+    public String getText() {
+        return text;
     }
 
-    public int getValue() {
-        return value;
+    public int getCode() {
+        return code;
     }
 }

@@ -1,4 +1,4 @@
-package http.request;
+package http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import http.request.Parameters;
+import http.request.RequestLine;
 import utils.IOUtils;
 
 public class HttpRequest {
@@ -13,12 +15,12 @@ public class HttpRequest {
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
     private final RequestLine requestLine;
-    private final RequestHeaders requestHeaders;
+    private final HttpHeaders httpHeaders;
     private final String body;
 
-    private HttpRequest(RequestLine requestLine, RequestHeaders requestHeaders, String body) {
+    private HttpRequest(RequestLine requestLine, HttpHeaders httpHeaders, String body) {
         this.requestLine = requestLine;
-        this.requestHeaders = requestHeaders;
+        this.httpHeaders = httpHeaders;
         this.body = body;
     }
 
@@ -26,15 +28,19 @@ public class HttpRequest {
         String firstLine = bufferedReader.readLine();
         logger.debug(firstLine);
         RequestLine requestLine = RequestLine.from(firstLine);
-        RequestHeaders requestHeaders = RequestHeaders.from(IOUtils.readHeaders(bufferedReader));
+        HttpHeaders httpHeaders = HttpHeaders.from(IOUtils.readHeaders(bufferedReader));
 
         String body = null;
-        if (requestHeaders.contains(CONTENT_LENGTH)) {
+        if (httpHeaders.contains(CONTENT_LENGTH)) {
             body = IOUtils.readData(bufferedReader,
-                    Integer.parseInt(requestHeaders.getAttribute(CONTENT_LENGTH)));
+                    Integer.parseInt(httpHeaders.getAttribute(CONTENT_LENGTH)));
         }
 
-        return new HttpRequest(requestLine, requestHeaders, body);
+        return new HttpRequest(requestLine, httpHeaders, body);
+    }
+
+    public boolean isGet(){
+        return requestLine.isGet();
     }
 
     public boolean isPost() {
@@ -42,7 +48,7 @@ public class HttpRequest {
     }
 
     public String getAttribute(String attribute) {
-        return requestHeaders.getAttribute(attribute);
+        return httpHeaders.getAttribute(attribute);
     }
 
     public String getPath() {
@@ -53,8 +59,8 @@ public class HttpRequest {
         return body;
     }
 
-    public String getHttpVersion() {
-        return requestLine.getHttpVersion().getHttpVersion();
+    public HttpVersion getHttpVersion() {
+        return requestLine.getHttpVersion();
     }
 
     public Parameters getParameters() {

@@ -30,6 +30,10 @@ public class RequestLine {
         return httpMethod.isPost();
     }
 
+    public boolean isGet() {
+        return httpMethod.isGet();
+    }
+
     public String getPath() {
         return requestUri.getPath();
     }
