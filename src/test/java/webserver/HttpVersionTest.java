@@ -12,8 +12,8 @@ import http.HttpVersion;
 class HttpVersionTest {
     @DisplayName("HTTP VERSION에 해당하는 객체 반환")
     @ParameterizedTest
-    @CsvSource(value = {"HTTP/1.0,VERSION10", "HTTP/1.1,VERSION11", "HTTP/2.0,VERSION20",
-            "HTTP/3.0,VERSION30"})
+    @CsvSource(value = {"HTTP/1.0,VERSION_1_0", "HTTP/1.1,VERSION_1_1", "HTTP/2.0,VERSION_2_0",
+            "HTTP/3.0,VERSION_3_0"})
     void from(String input, HttpVersion version) {
         assertThat(HttpVersion.from(input)).isEqualTo(version);
     }
