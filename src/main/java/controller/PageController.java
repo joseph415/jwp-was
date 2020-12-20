@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import exception.RequestHandleException;
-import http.HttpRequest;
+import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.response.HttpStatus;
+import http.response.StatusLine;
 import utils.FileIoUtils;
 import webserver.StaticResource;
 
@@ -15,14 +16,15 @@ public class PageController implements Controller {
 
     @Override
     public void handleRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
-        try{
+        try {
             String requestPath = httpRequest.getPath();
             String contentType = StaticResource.fromPath(requestPath).getContentType();
             byte[] body = FileIoUtils.loadFileFromClasspath(TEMPLATE_PATH + requestPath);
 
-            httpResponse.setStatusLine(httpRequest.getHttpVersion(), HttpStatus.OK);
-            httpResponse.setBody(body,contentType);
-        } catch (IOException |URISyntaxException e) {
+            httpResponse.setStatusLine(
+                    StatusLine.from(httpRequest.getHttpVersion(), HttpStatus.OK));
+            httpResponse.setBody(body, contentType);
+        } catch (IOException | URISyntaxException e) {
             throw new RequestHandleException(e);
         }
     }

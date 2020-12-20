@@ -1,4 +1,4 @@
-package webserver;
+package http.request;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -9,7 +9,7 @@ import java.io.StringReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import http.HttpRequest;
+import http.request.HttpRequest;
 
 class HttpRequestTest {
     @DisplayName("BufferedReader로 객체 생성")

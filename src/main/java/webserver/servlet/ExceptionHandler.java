@@ -9,10 +9,11 @@ import java.util.Map;
 
 import exception.NotFoundController;
 import exception.RequestHandleException;
-import http.HttpRequest;
-import http.response.ContentType;
+import http.ContentType;
+import http.request.HttpRequest;
 import http.response.HttpResponse;
 import http.response.HttpStatus;
+import http.response.StatusLine;
 import utils.FileIoUtils;
 
 public class ExceptionHandler {
@@ -41,10 +42,12 @@ public class ExceptionHandler {
     private static void setStatusLine(RuntimeException runtimeException, HttpRequest httpRequest,
             HttpResponse httpResponse) {
 
-        if(runtimeException instanceof NotFoundController) {
-            httpResponse.setStatusLine(httpRequest.getHttpVersion(), HttpStatus.NOT_FOUND);
+        if (runtimeException instanceof NotFoundController) {
+            httpResponse.setStatusLine(
+                    StatusLine.from(httpRequest.getHttpVersion(), HttpStatus.NOT_FOUND));
         }
-        httpResponse.setStatusLine(httpRequest.getHttpVersion(), HttpStatus.INTERNAL_SERVER_ERROR);
+        httpResponse.setStatusLine(
+                StatusLine.from(httpRequest.getHttpVersion(), HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
 }

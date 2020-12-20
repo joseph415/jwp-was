@@ -3,7 +3,7 @@ package webserver;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import http.response.ContentType;
+import http.ContentType;
 
 public enum StaticResource {
     CSS("/css", ContentType.CSS.getContentType()),

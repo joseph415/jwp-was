@@ -1,8 +1,8 @@
 package controller;
 
 import db.DataBase;
-import http.HttpRequest;
-import http.response.ContentType;
+import http.request.HttpRequest;
+import http.ContentType;
 import http.response.HttpResponse;
 import model.User;
 import utils.StringUtils;

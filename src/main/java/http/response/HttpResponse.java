@@ -1,5 +1,7 @@
 package http.response;
 
+import static http.HttpHeaders.*;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -22,32 +24,45 @@ public class HttpResponse {
         this.httpHeaders = HttpHeaders.create();
     }
 
-    public void setStatusLine(HttpVersion httpVersion, HttpStatus httpStatus) {
-        this.statusLine.updateStatusLine(StatusLine.from(httpVersion, httpStatus));
+    public void setStatusLine(StatusLine statusLine) {
+        this.statusLine.updateStatusLine(statusLine);
     }
 
     public void setBody(byte[] body, String contentType) {
         this.body = body;
-        httpHeaders.addHeader("Content-Type", contentType);
-        httpHeaders.addHeader("Content-Length", String.valueOf(body.length));
+        httpHeaders.addHeader(CONTENT_TYPE, contentType);
+        httpHeaders.addHeader(CONTENT_LENGTH, String.valueOf(body.length));
     }
 
     public void redirect(HttpVersion httpVersion, String location, String contentType) {
         this.statusLine.updateStatusLine(
                 StatusLine.from(httpVersion, HttpStatus.MOVED_PERMANENTLY));
-        this.httpHeaders.addHeader("Location", location);
-        this.httpHeaders.addHeader("Content-Type", contentType);
+        this.httpHeaders.addHeader(LOCATION, location);
+        this.httpHeaders.addHeader(CONTENT_TYPE, contentType);
     }
 
     public void send(DataOutputStream dos) {
         try {
             dos.writeBytes(statusLine.toStatusLineFormat() + System.lineSeparator());
             dos.writeBytes(httpHeaders.toHttpHeaderStringFormat() + System.lineSeparator());
+            dos.writeBytes(System.lineSeparator());
             dos.write(body, 0, body.length);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
             throw new RequestHandleException(e);
         }
+    }
+
+    public StatusLine getStatusLine() {
+        return statusLine;
+    }
+
+    public HttpHeaders getHttpHeaders() {
+        return httpHeaders;
+    }
+
+    public byte[] getBody() {
+        return body;
     }
 }

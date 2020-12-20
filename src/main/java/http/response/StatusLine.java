@@ -18,17 +18,24 @@ public class StatusLine {
         return new StatusLine(STANDARDIZED_PROTOCOL_HTTP_VERSION, DEFAULT_HTTP_STATUS);
     }
 
-    public static StatusLine from(HttpVersion httpVersion, HttpStatus httpStatus){
+    public static StatusLine from(HttpVersion httpVersion, HttpStatus httpStatus) {
         return new StatusLine(httpVersion, httpStatus);
     }
 
-    public void updateStatusLine(StatusLine statusLine){
+    public void updateStatusLine(StatusLine statusLine) {
         this.httpVersion = statusLine.httpVersion;
         this.httpStatus = statusLine.httpStatus;
     }
 
     public String toStatusLineFormat() {
-        return String.format("%s %d %s %s", httpVersion.getHttpVersion(),
-                httpStatus.getCode(), httpStatus.getText(), System.lineSeparator());
+        return String.format("%s %d %s", httpVersion.getHttpVersion(), httpStatus.getCode(), httpStatus.getText());
+    }
+
+    public HttpVersion getHttpVersion() {
+        return httpVersion;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 }

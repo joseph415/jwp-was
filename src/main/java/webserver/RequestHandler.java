@@ -12,12 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exception.NotFoundController;
-import exception.NotFoundPathException;
-import exception.RequestHandleException;
-import http.HttpRequest;
+import http.request.HttpRequest;
 import http.response.HttpResponse;
 import webserver.servlet.DispatcherServlet;
-import webserver.servlet.ExceptionHandler;
 import webserver.servlet.ResourceHttpHandler;
 import webserver.servlet.Servlet;
 import webserver.servlet.ServletContext;

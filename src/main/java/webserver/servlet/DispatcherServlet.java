@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import controller.Controller;
 import exception.NotFoundPathException;
 import exception.RequestHandleException;
-import http.HttpRequest;
+import http.request.HttpRequest;
 import http.response.HttpResponse;
 
 public class DispatcherServlet extends Servlet {
