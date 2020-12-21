@@ -17,14 +17,14 @@ class HttpResponseTest {
     @DisplayName("새로운 statusLine으로 update가 된다.")
     @Test
     void ShouldUpdateStatusLine() {
-        HttpResponse httpResponse = new HttpResponse();
+        Response response = new HttpResponse();
 
-        httpResponse.setStatusLine(StatusLine.from(HttpVersion.VERSION_1_1, HttpStatus.OK));
+        response.setStatusLine(StatusLine.from(HttpVersion.VERSION_1_1, HttpStatus.OK));
 
         assertAll(
-                () -> assertThat(httpResponse.getStatusLine().getHttpVersion()).isEqualTo(
+                () -> assertThat(response.getStatusLine().getHttpVersion()).isEqualTo(
                         HttpVersion.VERSION_1_1),
-                () -> assertThat(httpResponse.getStatusLine().getHttpStatus()).isEqualTo(
+                () -> assertThat(response.getStatusLine().getHttpStatus()).isEqualTo(
                         HttpStatus.OK)
         );
     }
@@ -33,14 +33,14 @@ class HttpResponseTest {
     @Test
     void ShouldUpdateBody() {
         String body = "<h1>a</h1>";
-        HttpResponse httpResponse = new HttpResponse();
+        Response response = new HttpResponse();
 
-        httpResponse.setBody(body.getBytes(), ContentType.HTML.getContentType());
+        response.setBody(body.getBytes(), ContentType.HTML.getContentType());
 
         assertAll(
-                () -> assertThat(httpResponse.getBody()).isEqualTo(body.getBytes()),
+                () -> assertThat(response.getBody()).isEqualTo(body.getBytes()),
                 () -> assertThat(
-                        httpResponse.getHttpHeaders()
+                        response.getHttpHeaders()
                                 .getAttribute(CONTENT_TYPE)).isEqualTo(
                         ContentType.HTML.getContentType())
         );
@@ -49,18 +49,18 @@ class HttpResponseTest {
     @DisplayName("redirect 하도록 response를 구성한다")
     @Test
     void shouldSetResponseToRedirect() {
-        HttpResponse httpResponse = new HttpResponse();
+        Response response = new HttpResponse();
 
-        httpResponse.redirect(HttpVersion.VERSION_1_1, "/index.html",
+        response.redirect(HttpVersion.VERSION_1_1, "/index.html",
                 ContentType.HTML.getContentType());
 
         assertAll(
-                () -> assertThat(httpResponse.getStatusLine().getHttpStatus()).isEqualTo(
+                () -> assertThat(response.getStatusLine().getHttpStatus()).isEqualTo(
                         HttpStatus.MOVED_PERMANENTLY),
-                () -> assertThat(httpResponse.getHttpHeaders().getAttribute(LOCATION)).isEqualTo(
+                () -> assertThat(response.getHttpHeaders().getAttribute(LOCATION)).isEqualTo(
                         "/index.html"),
                 () -> assertThat(
-                        httpResponse.getHttpHeaders()
+                        response.getHttpHeaders()
                                 .getAttribute(CONTENT_TYPE)).isEqualTo(
                         ContentType.HTML.getContentType())
         );
@@ -70,8 +70,8 @@ class HttpResponseTest {
     @Test
     void ShouldBeWriteDataOutputStream() {
         String body = "<h1>a</h1>";
-        HttpResponse httpResponse = new HttpResponse();
-        httpResponse.setBody(body.getBytes(), ContentType.HTML.getContentType());
+        Response response = new HttpResponse();
+        response.setBody(body.getBytes(), ContentType.HTML.getContentType());
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         //어떻게 스트림에 테스트할지가 관심이 아니고 잘 써져있는지 관심
         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
@@ -82,7 +82,7 @@ class HttpResponseTest {
                 + "\n"
                 + "<h1>a</h1>";
 
-        httpResponse.send(dataOutputStream);
+        response.send(dataOutputStream);
 
         assertThat(byteArrayOutputStream.toString()).isEqualTo(expect);
     }

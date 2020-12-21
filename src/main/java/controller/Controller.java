@@ -1,8 +1,8 @@
 package controller;
 
-import http.request.HttpRequest;
-import http.response.HttpResponse;
+import http.request.Request;
+import http.response.Response;
 
 public interface Controller {
-    void handleRequest(HttpRequest httpRequest, HttpResponse httpResponse);
+    void handleRequest(Request request, Response response);
 }

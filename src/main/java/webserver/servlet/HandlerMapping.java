@@ -21,7 +21,7 @@ public class HandlerMapping {
         if (path == null) {
             throw new NullPointerException("Request-path가 null입니다.");
         }
-        if(mapping.containsKey(path)){
+        if(!mapping.containsKey(path)){
             throw new NotFoundController("컨트롤러가 존재하지 않습니다.");
         }
         return mapping.get(path);

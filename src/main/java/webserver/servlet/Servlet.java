@@ -1,26 +1,26 @@
 package webserver.servlet;
 
-import http.request.HttpRequest;
-import http.response.HttpResponse;
+import http.request.Request;
+import http.response.Response;
 
 public abstract class Servlet {
     protected abstract void init();
 
     protected abstract void destroy();
 
-    public void service(HttpRequest request, HttpResponse response){
+    public void service(Request request, Response response){
         if(request.isGet()){
             doGet(request, response);
         }
         doPost(request, response);
     }
 
-    void doGet(HttpRequest request, HttpResponse response){
+    private void doGet(Request request, Response response){
         doService(request, response);
     }
-    void doPost(HttpRequest request, HttpResponse response){
+    private void doPost(Request request, Response response){
         doService(request, response);
     }
 
-    protected abstract void doService(HttpRequest request, HttpResponse response);
+    protected abstract void doService(Request request, Response response);
 }

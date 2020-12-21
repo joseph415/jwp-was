@@ -12,7 +12,7 @@ import exception.RequestHandleException;
 import http.HttpHeaders;
 import http.HttpVersion;
 
-public class HttpResponse {
+public class HttpResponse implements Response {
     private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
 
     private StatusLine statusLine;
@@ -24,16 +24,19 @@ public class HttpResponse {
         this.httpHeaders = HttpHeaders.create();
     }
 
+    @Override
     public void setStatusLine(StatusLine statusLine) {
         this.statusLine.updateStatusLine(statusLine);
     }
 
+    @Override
     public void setBody(byte[] body, String contentType) {
         this.body = body;
         httpHeaders.addHeader(CONTENT_TYPE, contentType);
         httpHeaders.addHeader(CONTENT_LENGTH, String.valueOf(body.length));
     }
 
+    @Override
     public void redirect(HttpVersion httpVersion, String location, String contentType) {
         this.statusLine.updateStatusLine(
                 StatusLine.from(httpVersion, HttpStatus.MOVED_PERMANENTLY));
@@ -41,6 +44,7 @@ public class HttpResponse {
         this.httpHeaders.addHeader(CONTENT_TYPE, contentType);
     }
 
+    @Override
     public void send(DataOutputStream dos) {
         try {
             dos.writeBytes(statusLine.toStatusLineFormat() + System.lineSeparator());
@@ -54,14 +58,16 @@ public class HttpResponse {
         }
     }
 
+    @Override
     public StatusLine getStatusLine() {
         return statusLine;
     }
 
+    @Override
     public HttpHeaders getHttpHeaders() {
         return httpHeaders;
     }
-
+    @Override
     public byte[] getBody() {
         return body;
     }

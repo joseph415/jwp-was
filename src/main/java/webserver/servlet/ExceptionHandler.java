@@ -10,9 +10,9 @@ import java.util.Map;
 import exception.NotFoundController;
 import exception.RequestHandleException;
 import http.ContentType;
-import http.request.HttpRequest;
-import http.response.HttpResponse;
+import http.request.Request;
 import http.response.HttpStatus;
+import http.response.Response;
 import http.response.StatusLine;
 import utils.FileIoUtils;
 
@@ -25,29 +25,29 @@ public class ExceptionHandler {
         errorMapping.put(RequestHandleException.class, "/error/internalServerError.html");
     }
 
-    public static void handleError(RuntimeException runtimeException, HttpRequest httpRequest,
-            HttpResponse httpResponse) {
+    public static void handleError(RuntimeException runtimeException, Request request,
+            Response response) {
         try {
             final String path = errorMapping.get(runtimeException.getClass());
             byte[] body = FileIoUtils.loadFileFromClasspath(TEMPLATE_PATH + path);
 
-            setStatusLine(runtimeException, httpRequest, httpResponse);
-            httpResponse.setBody(body, ContentType.HTML.getContentType());
+            setStatusLine(runtimeException, request, response);
+            response.setBody(body, ContentType.HTML.getContentType());
 
         } catch (IOException | URISyntaxException e) {
             throw new RequestHandleException(e);
         }
     }
 
-    private static void setStatusLine(RuntimeException runtimeException, HttpRequest httpRequest,
-            HttpResponse httpResponse) {
+    private static void setStatusLine(RuntimeException runtimeException, Request request,
+            Response response) {
 
         if (runtimeException instanceof NotFoundController) {
-            httpResponse.setStatusLine(
-                    StatusLine.from(httpRequest.getHttpVersion(), HttpStatus.NOT_FOUND));
+            response.setStatusLine(
+                    StatusLine.from(request.getHttpVersion(), HttpStatus.NOT_FOUND));
         }
-        httpResponse.setStatusLine(
-                StatusLine.from(httpRequest.getHttpVersion(), HttpStatus.INTERNAL_SERVER_ERROR));
+        response.setStatusLine(
+                StatusLine.from(request.getHttpVersion(), HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
 }

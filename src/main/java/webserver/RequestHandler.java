@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import exception.NotFoundController;
 import http.request.HttpRequest;
+import http.request.Request;
 import http.response.HttpResponse;
+import http.response.Response;
 import webserver.servlet.DispatcherServlet;
 import webserver.servlet.ResourceHttpHandler;
 import webserver.servlet.Servlet;
@@ -39,24 +41,24 @@ public class RequestHandler implements Runnable {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
             DataOutputStream dos = new DataOutputStream(out);
 
-            HttpRequest httpRequest = HttpRequest.from(bufferedReader);
-            HttpResponse httpResponse = new HttpResponse();
+            Request request = HttpRequest.from(bufferedReader);
+            Response response = new HttpResponse();
             servletContext.addServletIfNotPresent("dispatcherServlet", new DispatcherServlet());
 
-            handleRequest(httpRequest, httpResponse);
-            httpResponse.send(dos);
+            handleRequest(request, response);
+            response.send(dos);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void handleRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
+    private void handleRequest(Request request, Response response) {
         final Servlet dispatcherServlet = servletContext.getServlet("dispatcherServlet");
 
         try {
-            dispatcherServlet.service(httpRequest, httpResponse);
+            dispatcherServlet.service(request, response);
         } catch (NotFoundController e) {
-            ResourceHttpHandler.handleResource(httpRequest, httpResponse);
+            ResourceHttpHandler.handleResource(request, response);
         }
     }
 }

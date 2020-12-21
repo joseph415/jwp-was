@@ -6,23 +6,23 @@ import java.util.NoSuchElementException;
 
 import exception.NotFoundPathException;
 import exception.RequestHandleException;
-import http.request.HttpRequest;
-import http.response.HttpResponse;
+import http.request.Request;
 import http.response.HttpStatus;
+import http.response.Response;
 import http.response.StatusLine;
 import utils.FileIoUtils;
 import webserver.StaticResource;
 
 public class ResourceHttpHandler {
-    public static void handleResource(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public static void handleResource(Request request, Response response) {
         try {
-            String requestPath = httpRequest.getPath();
+            String requestPath = request.getPath();
             String contentType = StaticResource.fromPath(requestPath).getContentType();
             byte[] body = FileIoUtils.loadFileFromClasspath(
                     StaticResource.STATIC_PATH + requestPath);
 
-            httpResponse.setStatusLine(StatusLine.from(httpRequest.getHttpVersion(), HttpStatus.OK));
-            httpResponse.setBody(body, contentType);
+            response.setStatusLine(StatusLine.from(request.getHttpVersion(), HttpStatus.OK));
+            response.setBody(body, contentType);
         } catch (NoSuchElementException e) {
             throw new NotFoundPathException("404 Not found");
         } catch (IOException | URISyntaxException e) {

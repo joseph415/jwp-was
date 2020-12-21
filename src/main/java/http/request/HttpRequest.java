@@ -10,7 +10,7 @@ import http.HttpHeaders;
 import http.HttpVersion;
 import utils.IOUtils;
 
-public class HttpRequest {
+public class HttpRequest implements Request {
     private static final String CONTENT_LENGTH = "Content-Length";
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
@@ -24,7 +24,7 @@ public class HttpRequest {
         this.body = body;
     }
 
-    public static HttpRequest from(BufferedReader bufferedReader) throws IOException {
+    public static Request from(BufferedReader bufferedReader) throws IOException {
         String firstLine = bufferedReader.readLine();
         logger.debug(firstLine);
         RequestLine requestLine = RequestLine.from(firstLine);
@@ -39,30 +39,37 @@ public class HttpRequest {
         return new HttpRequest(requestLine, httpHeaders, body);
     }
 
+    @Override
     public boolean isGet(){
         return requestLine.isGet();
     }
 
+    @Override
     public boolean isPost() {
         return requestLine.isPost();
     }
 
+    @Override
     public String getAttribute(String attribute) {
         return httpHeaders.getAttribute(attribute);
     }
 
+    @Override
     public String getPath() {
         return requestLine.getPath();
     }
 
+    @Override
     public String getBody() {
         return body;
     }
 
+    @Override
     public HttpVersion getHttpVersion() {
         return requestLine.getHttpVersion();
     }
 
+    @Override
     public Parameters getParameters() {
         return requestLine.getParameters();
     }
